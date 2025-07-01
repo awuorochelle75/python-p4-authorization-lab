@@ -17,13 +17,16 @@ class Article(db.Model, SerializerMixin):
     content = db.Column(db.String)
     preview = db.Column(db.String)
     minutes_to_read = db.Column(db.Integer)
-    is_member_only = db.Column(db.Boolean, default=False)
+    is_member_only = db.Column(db.Boolean, default=False)  
     date = db.Column(db.DateTime, server_default=db.func.now())
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+
+    serialize_rules = ('-user.articles',)
+
     def __repr__(self):
-        return f'Article {self.id} by {self.author}'
+        return f'<Article {self.id} by {self.author}>'
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -33,5 +36,7 @@ class User(db.Model, SerializerMixin):
 
     articles = db.relationship('Article', backref='user')
 
+    serialize_rules = ('-articles.user',)  
+
     def __repr__(self):
-        return f'User {self.username}, ID {self.id}'
+        return f'<User {self.username}, ID {self.id}>'
